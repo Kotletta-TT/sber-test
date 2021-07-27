@@ -1,20 +1,21 @@
 version: "3.9"
 
 services:
-    app:
-        build: app/
-        restart: always
-        depends_on:
-          - db
-          - rmq
-        networks:
-          - network
-      sber-test-bot:
-        build: sber-test-bot/
-        restart: always
-        networks:
-          - network
+  app:
+    build: app/
+    ports:
+      - '80:80'
+    tty: true
+    restart: always
+    networks:
+      - network
+  
+  sber-test-bot:
+    build: sber-test-bot/
+    restart: always
+    networks:
+      - network
 
 networks:
-    network:
-        {}
+  network:
+      {}

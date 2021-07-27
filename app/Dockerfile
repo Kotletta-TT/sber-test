@@ -1,9 +1,8 @@
-FROM python:3.7-alpine
+FROM python:3.7
 
 WORKDIR /usr/src/app
 COPY Pipfile* ./
-RUN apk update && apk add g++ gcc libxml2 libxslt-dev
 RUN pip install pipenv
 RUN pipenv install --system --deploy
 COPY . ./
-CMD ["python3", "manage.py", "runserver"]
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:80"]

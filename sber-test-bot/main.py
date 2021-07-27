@@ -8,7 +8,7 @@ from aiogram import Bot, Dispatcher, executor, types
 # TODO реализовать yaml-конфиг
 # TODO реализовать логирование
 API_TOKEN = '1922015387:AAHM5g0GXKMDZH2VQoXSHJxsJ0wd9Z2-FZE'
-URL = 'http://localhost:8000/api/v1/booking/'
+URL = 'http://app/api/v1/booking/'
 HEADER = {'Content-Type': 'application/json'}
 
 # Configure logging
