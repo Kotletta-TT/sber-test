@@ -1,0 +1,5 @@
+bot:
+  api_token_dev: 1941972447:AAFd73NuhxqvgBKW9FPI3Cp7jLaAlMlpkm4
+  url: http://app/api/v1/booking/
+  log_lvl: INFO
+  api_token_prod: 1922015387:AAHM5g0GXKMDZH2VQoXSHJxsJ0wd9Z2-FZE

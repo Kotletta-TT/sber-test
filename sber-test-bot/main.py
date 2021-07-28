@@ -1,14 +1,21 @@
 import json
 import logging
+import re
 from datetime import datetime
 import aiohttp
 import asyncio
+import yaml
 from aiogram import Bot, Dispatcher, executor, types
 
-# TODO реализовать yaml-конфиг
-# TODO реализовать логирование
-API_TOKEN = '1922015387:AAHM5g0GXKMDZH2VQoXSHJxsJ0wd9Z2-FZE'
-URL = 'http://app/api/v1/booking/'
+
+def get_config():
+    with open('config/dev.yml', 'r') as file:
+        conf = yaml.load(file)
+    return conf
+
+CONFIG = get_config()['bot']
+API_TOKEN = CONFIG['api_token_dev']
+URL = CONFIG['url']
 HEADER = {'Content-Type': 'application/json'}
 
 # Configure logging
@@ -18,11 +25,12 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
-# TODO перейти на регулярки для большей гибкости
 def get_count_people(user_input):
     try:
-        count_people = int(user_input[30:])
-    except (ValueError, IndexError):
+        find_count = re.search(r' ([0-9]?[0-9])$', user_input)
+        logging.INFO(f"{find_count}")
+        count_people = int(find_count)
+    except (ValueError, IndexError, TypeError):
         count_people = None
     if count_people and 0 < count_people < 50:
         return count_people
@@ -34,8 +42,9 @@ def get_booking_time(user_input):
     # TODO Нет проверки на то что все столики заняты
     # TODO Нету заложения 2-х часового резерва в бронь конкретного столика
     try:
-        booking_time = datetime.strptime(user_input[13:29], "%Y-%m-%d %H:%M")
-    except (ValueError, IndexError):
+        find_time = re.search(r'[2][0-1][0-9][0-9]-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]', user_input)
+        booking_time = datetime.strptime(find_time[0], "%Y-%m-%d %H:%M")
+    except (ValueError, IndexError, TypeError):
         booking_time = None
     return booking_time
 
@@ -51,7 +60,7 @@ async def set_booking(message: types.Message):
     data_booking['booking_time'] = get_booking_time(message.text)
     data_booking['count_people'] = get_count_people(message.text)
     if not data_booking['booking_time']:
-        return await message.reply('Некорректный формат даты/времени, пожалуйста введите дату и время бронирования согласно формату DD-MM-YYYY')
+        return await message.reply('Некорректный формат даты/времени, пожалуйста введите дату и время бронирования согласно формату YYYY-MM-DD h:m')
     elif not data_booking['count_people']:
         return await message.reply('Некорректное число людей, введите число от 1-50 в формате /set_booking YYYY-MM-DD h:m 4 - где 4 - число людей')
     send_data = json.dumps(data_booking, indent=4, sort_keys=True, default=str)
@@ -65,7 +74,6 @@ async def set_booking(message: types.Message):
 @dp.message_handler(commands=['my_booking'])
 async def my_booking(message: types.Message):
     url = URL + str(message.chat.id) + '/'
-    print(url)
     async with aiohttp.ClientSession() as session:
         async with session.get(url=url, headers=HEADER) as resp:
             # TODO сделать форматирование сообщения

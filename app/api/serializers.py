@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import Order
+from .models import Booking
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class BookingSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Order
-        fields = ['count_people', 'time']
+        model = Booking
+        fields = ['count_people', 'booking_time']

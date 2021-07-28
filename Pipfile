@@ -4,8 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-aiogram = "*"
-aiohttp = "*"
+django = "*"
 pyyaml = "*"
 
 [dev-packages]
