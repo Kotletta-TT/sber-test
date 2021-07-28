@@ -14,7 +14,7 @@ def get_config():
     return conf
 
 CONFIG = get_config()['bot']
-API_TOKEN = CONFIG['api_token_dev']
+API_TOKEN = CONFIG['api_token_prod']
 URL = CONFIG['url']
 HEADER = {'Content-Type': 'application/json'}
 
